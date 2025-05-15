@@ -1,11 +1,39 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ryby 2025 DreamTeam</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
+  <style>
+    body {
+      background-image: url('tlo.jpg');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .box {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+    }
+    textarea {
+      resize: vertical;
+    }
+    img.icon, i.wi {
+      width: 48px;
+      vertical-align: middle;
+    }
+  </style>
 </head>
 <body class="container">
   <div class="text-center mt-4 box">
@@ -43,11 +71,11 @@
     <div class="row">
       <div class="col-md-6">
         <h5>Maciek</h5>
-        <textarea rows="10">08:00–16:00 – Kulka 16mm truskawkowa</textarea>
+        <textarea rows="10" placeholder="Godzina – Przynęta...\n">08:00–16:00 – Kulka 16mm truskawkowa\n</textarea>
       </div>
       <div class="col-md-6">
         <h5>Patryk</h5>
-        <textarea rows="10">08:00–16:00 – Kulka 16mm truskawkowa</textarea>
+        <textarea rows="10" placeholder="Godzina – Przynęta...\n">08:00–16:00 – Kulka 16mm truskawkowa\n</textarea>
       </div>
     </div>
   </div>
@@ -57,11 +85,11 @@
     <div class="row">
       <div class="col-md-6">
         <h5>Maciek</h5>
-        <textarea rows="12"></textarea>
+        <textarea rows="12" placeholder="Data – Godzina – Gatunek – Waga – Przynęta\n"></textarea>
       </div>
       <div class="col-md-6">
         <h5>Patryk</h5>
-        <textarea rows="12"></textarea>
+        <textarea rows="12" placeholder="Data – Godzina – Gatunek – Waga – Przynęta\n"></textarea>
       </div>
     </div>
   </div>
@@ -93,6 +121,48 @@
     </ul>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    const warunkiPL = {
+      0: 'Bezchmurnie', 1: 'Głównie bezchmurnie', 2: 'Częściowo pochmurno', 3: 'Zachmurzenie całkowite',
+      45: 'Mgła', 48: 'Osadzająca się mgła',
+      51: 'Lekka mżawka', 53: 'Umiarkowana mżawka', 55: 'Gęsta mżawka',
+      61: 'Lekki deszcz', 63: 'Umiarkowany deszcz', 65: 'Ulewne opady',
+      71: 'Śnieg lekki', 73: 'Śnieg umiarkowany', 75: 'Obfite opady śniegu',
+      80: 'Przelotne opady', 81: 'Umiarkowane przelotne', 82: 'Silne przelotne',
+      95: 'Burza', 96: 'Burza z gradem', 99: 'Silna burza z gradem'
+    };
+    const dniPL = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=52.2184&longitude=6.8958&current=temperature_2m,relative_humidity_2m,pressure_msl,precipitation&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_mean,weathercode&timezone=auto&start_date=2025-06-01&end_date=2025-06-07')
+      .then(res => res.json())
+      .then(data => {
+        const current = data.current;
+        document.getElementById("weatherBox").innerHTML = `
+          <p><i class="wi wi-day-sunny"></i> Temperatura: ${current.temperature_2m}°C</p>
+          <p><i class="wi wi-barometer"></i> Ciśnienie: ${current.pressure_msl} hPa</p>
+          <p><i class="wi wi-humidity"></i> Wilgotność: ${current.relative_humidity_2m}%</p>
+        `;
+
+        const forecastList = document.getElementById("forecastList");
+        forecastList.innerHTML = "";
+        for (let i = 0; i < data.daily.time.length; i++) {
+          const dateStr = data.daily.time[i];
+          const date = new Date(dateStr);
+          const day = dniPL[date.getDay()];
+          const tmin = data.daily.temperature_2m_min[i];
+          const tmax = data.daily.temperature_2m_max[i];
+          const rain = data.daily.precipitation_probability_mean[i];
+          const code = data.daily.weathercode[i];
+          const opis = warunkiPL[code] || 'Pogoda';
+          const ikona = code < 3 ? 'wi-day-sunny' : (code < 61 ? 'wi-cloudy' : 'wi-rain');
+
+          forecastList.innerHTML += `<li><i class="wi ${ikona}"></i> ${day}, ${date.getDate()} czerwca: ${tmin}–${tmax}°C, Opady: ${rain}%, ${opis}</li>`;
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById("weatherBox").innerText = "Nie udało się załadować pogody.";
+      });
+  </script>
 </body>
 </html>
