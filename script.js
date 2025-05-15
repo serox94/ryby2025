@@ -20,7 +20,16 @@ document.getElementById('alertBox').innerText = hour >= 20 || hour < 6
   : "Dobre warunki do łowienia.";
 
 fetch('https://api.openweathermap.org/data/2.5/onecall?lat=52.2184&lon=6.8958&units=metric&lang=pl&exclude=hourly,minutely&appid=fd3ff3668ce17f7d6ffe3073a1fb8a68')
-  .then(res => res.json())
+  .then(async res => {
+    const contentType = res.headers.get("content-type");
+    const text = await res.text();
+    if (contentType && contentType.includes("application/json")) {
+      return JSON.parse(text);
+    } else {
+      console.error("Błędny typ danych:", contentType);
+      throw new Error("Niepoprawny format odpowiedzi z API pogodowego.");
+    }
+  })
   .then(data => {
     const current = data.current;
     document.getElementById("weatherBox").innerHTML = `
