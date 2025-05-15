@@ -1,26 +1,69 @@
 body {
-  background-image: url('tlo.jpg');
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
-  color: white;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Trebuchet MS", Arial, sans-serif;
+  background: linear-gradient(to bottom, #c6e2ff 0%, #f0f8ff 100%);
+  margin: 10px;
+  color: #000;
 }
+
+h1, h3, h4, h5 {
+  font-family: "Georgia", serif;
+  font-weight: 700;
+  text-shadow: 1px 1px 1px #ddd;
+  color: #003366;
+}
+
 .box {
-  background-color: rgba(0, 0, 0, 0.6);
-  padding: 20px;
-  border-radius: 15px;
-  margin: 20px 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+  margin: 15px auto;
+  padding: 15px;
+  max-width: 850px;
 }
-input, textarea {
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-}
+
 textarea {
+  width: 100%;
+  font-family: monospace;
+  font-size: 0.9em;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #999;
   resize: vertical;
+  background-color: #fafafa;
+  color: #333;
 }
+
+ul {
+  padding-left: 20px;
+}
+
+a {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+a:hover, a:focus {
+  text-decoration: underline;
+}
+
 img.icon {
-  width: 48px;
+  width: 40px;
+  height: 40px;
+}
+
+.wi {
+  font-size: 24px;
   vertical-align: middle;
+  margin-right: 5px;
+  color: #0077cc;
+}
+
+@media (max-width: 600px) {
+  body {
+    margin: 5px;
+  }
+  .box {
+    margin: 10px 5px;
+    padding: 10px;
+  }
 }
