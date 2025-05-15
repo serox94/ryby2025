@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryby 2025 DreamTeam</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body style="background: url('tlo.jpg') no-repeat center center fixed; background-size: cover; font-family: Roboto, sans-serif;">
+    <div class="container">
+        <h1>Ryby 2025 DreamTeam</h1>
+        <p id="currentTime"></p>
+
+        <section id="countdown">
+            <h2>Odliczanie do startu</h2>
+            <p id="timer"></p>
+            <small>Cel: 1 czerwca 2025, godz. 14:00</small>
+        </section>
+
+        <section id="weather">
+            <h2>Aktualna pogoda w Enschede</h2>
+            <div id="weatherData">Wczytywanie danych pogodowych...</div>
+            <button onclick="loadWeather()">Odśwież dane</button>
+        </section>
+
+        <section id="forecast">
+            <h2>Prognoza na 1-7 czerwca 2025</h2>
+            <div id="forecastData">Wczytywanie prognozy...</div>
+        </section>
+
+        <section id="carpCalendar">
+            <h2>Kalendarz brań (karp)</h2>
+            <iframe src="https://kalendarz-rybaka.pl" width="100%" height="400"></iframe>
+        </section>
+
+        <section id="rigs">
+            <h2>Przypony i wiązanie haków</h2>
+            <p><a href="https://www.youtube.com/results?search_query=przypony+karpiowe+wiązanie+haku" target="_blank">Zobacz poradniki na YouTube</a></p>
+        </section>
+
+        <section id="lakeMap">
+            <h2>Mapa łowiska</h2>
+            <a href="https://maps.google.com?q=Rutbekerveldweg+275,+7548+PP+Enschede" target="_blank">Otwórz w Google Maps</a>
+        </section>
+
+        <section id="logbook">
+            <h2>Dziennik połowów</h2>
+            <textarea id="logText" rows="10" style="width:100%" placeholder="Zapisz datę, czas, przynętę, wynik, miejsce..."></textarea>
+        </section>
+
+        <section id="baitPlan">
+            <h2>Harmonogram przynęt</h2>
+            <textarea id="baitSchedule" rows="5" style="width:100%">8:00–16:00 - Kulka 16mm truskawkowa</textarea>
+        </section>
+
+        <section id="alerts">
+            <h2>Alerty pogodowe</h2>
+            <div id="alertsBox">Brak alertów</div>
+        </section>
+    </div>
+
+<script>
+// Licznik
+const targetDate = new Date("2025-06-01T14:00:00").getTime();
+setInterval(() => {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    document.getElementById("timer").textContent = `${days} dni ${hours} godz. ${minutes} min ${seconds} sek`;
+}, 1000);
+
+// Czas
+setInterval(() => {
+    const now = new Date();
+    document.getElementById("currentTime").textContent = now.toLocaleString("pl-PL");
+}, 1000);
+
+// Pogoda
+async function loadWeather() {
+    const apiKey = "fd3ff3668ce17f7d6ffe3073a1fb8a68";
+    try {
+        const res = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Enschede,NL&units=metric&lang=pl&appid=${apiKey}`);
+        const w = res.data;
+        document.getElementById("weatherData").innerHTML = `
+            <p>${w.main.temp}°C (${w.weather[0].description})</p>
+            <p>Odczuwalna: ${w.main.feels_like}°C</p>
+            <p>Wiatr: ${w.wind.speed} km/h</p>
+            <p>Ciśnienie: ${w.main.pressure} hPa</p>
+            <p>Wilgotność: ${w.main.humidity}%</p>
+        `;
+    } catch (err) {
+        document.getElementById("weatherData").textContent = "Nie udało się pobrać danych pogodowych.";
+    }
+}
+loadWeather();
+
+// Alerty – prosty system
+setInterval(() => {
+    const hours = new Date().getHours();
+    if (hours < 6 || hours > 21) {
+        document.getElementById("alertsBox").textContent = "Uwaga: Możliwa mgła / niska widoczność (noc)";
+    } else {
+        document.getElementById("alertsBox").textContent = "Brak alertów";
+    }
+}, 30000);
+</script>
+
+</body>
+</html>
