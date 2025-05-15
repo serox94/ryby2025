@@ -163,6 +163,37 @@
         console.error(err);
         document.getElementById("weatherBox").innerText = "Nie udało się załadować pogody.";
       });
+
+    setInterval(() => {
+      const now = new Date();
+      const dni = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+      const miesiace = ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'];
+      const d = now.getDate();
+      const m = miesiace[now.getMonth()];
+      const y = now.getFullYear();
+      const dzienTyg = dni[now.getDay()];
+      const godz = now.getHours().toString().padStart(2, '0');
+      const min = now.getMinutes().toString().padStart(2, '0');
+      const sek = now.getSeconds().toString().padStart(2, '0');
+      document.getElementById("datetime").innerText = `${dzienTyg}, ${d} ${m} ${y}, ${godz}:${min}:${sek}`;
+    }, 1000);
+
+    const countdownTarget = new Date("2025-06-01T14:00:00");
+    function updateCountdown() {
+      const now = new Date();
+      const diff = countdownTarget - now;
+      if (diff <= 0) {
+        document.getElementById("countdown").innerText = "Start nadszedł!";
+        return;
+      }
+      const dni = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const godz = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const min = Math.floor((diff / (1000 * 60)) % 60);
+      const sek = Math.floor((diff / 1000) % 60);
+      document.getElementById("countdown").innerText = `${dni} dni, ${godz} godzin, ${min} minut, ${sek} sekund`;
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
   </script>
 </body>
 </html>
