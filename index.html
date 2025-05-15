@@ -1,103 +1,436 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ryby 2025 DreamTeam</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css" />
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wędkarstwo w Enschede</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-image: url('tlo.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        
+        .content-wrapper {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .box {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .countdown {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e74c3c;
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .weather-alert {
+            background-color: #f39c12;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .fishing-tips {
+            background-color: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .location-link {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px 0;
+        }
+        
+        .location-link:hover {
+            background-color: #2980b9;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body class="container">
-  <div class="text-center mt-4 box">
-    <h1>Ryby 2025 DreamTeam</h1>
-    <p id="datetime"></p>
-  </div>
-
-  <div class="box text-center">
-    <h3>Odliczanie do startu</h3>
-    <p id="countdown"></p>
-  </div>
-
-  <div class="box">
-    <h4>Aktualna pogoda w Enschede</h4>
-    <div id="weatherBox">Ładowanie danych pogodowych...</div>
-  </div>
-
-  <div class="box">
-    <h4>Prognoza 1–7 czerwca 2025</h4>
-    <ul id="forecastList">Ładowanie prognozy...</ul>
-  </div>
-
-  <div class="box">
-    <h4>Mapa łowiska</h4>
-    <a href="https://www.google.com/maps?q=Rutbekerveldweg+275,+7548+PP+Enschede" target="_blank" rel="noopener noreferrer">Otwórz mapę Google</a>
-  </div>
-
-  <div class="box">
-    <h4>Kalendarz brań – kalkulator</h4>
-    <div id="biteCalendar">Analiza danych...</div>
-  </div>
-
-  <div class="box">
-    <h4>Harmonogram przynęt</h4>
-    <div class="row">
-      <div class="col-md-6">
-        <h5>Maciek</h5>
-        <textarea rows="10" placeholder="Godzina – Przynęta...">08:00–16:00 – Kulka 16mm truskawkowa
-</textarea>
-      </div>
-      <div class="col-md-6">
-        <h5>Patryk</h5>
-        <textarea rows="10" placeholder="Godzina – Przynęta...">08:00–16:00 – Kulka 16mm truskawkowa
-</textarea>
-      </div>
+<body>
+    <div class="content-wrapper">
+        <header>
+            <h1>Wędkarstwo w Enschede</h1>
+            <p>Przygotowania do wyprawy 1 czerwca</p>
+        </header>
+        
+        <div class="countdown">
+            <div id="current-time"></div>
+            <div id="countdown"></div>
+        </div>
+        
+        <div class="container">
+            <div class="box">
+                <h2>Aktualna pogoda w Enschede</h2>
+                <div id="current-weather">
+                    <p>Ładowanie danych pogodowych...</p>
+                </div>
+            </div>
+            
+            <div class="box">
+                <h2>Prognoza pogody 1-7 czerwca</h2>
+                <div id="weather-forecast">
+                    <p>Ładowanie prognozy pogody...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="box">
+            <h2>Kalendarz brań dla karpia (1-7 czerwca)</h2>
+            <table>
+                <tr>
+                    <th>Data</th>
+                    <th>Godziny dobrego brań</th>
+                    <th>Uwagi</th>
+                </tr>
+                <tr>
+                    <td>1 czerwca (sobota)</td>
+                    <td>5:00-9:00, 18:00-22:00</td>
+                    <td>Szczyt aktywności o wschodzie i zachodzie słońca</td>
+                </tr>
+                <tr>
+                    <td>2 czerwca (niedziela)</td>
+                    <td>6:00-10:00, 19:00-23:00</td>
+                    <td>Dobra aktywność w godzinach porannych</td>
+                </tr>
+                <tr>
+                    <td>3 czerwca (poniedziałek)</td>
+                    <td>4:00-8:00, 17:00-21:00</td>
+                    <td>Lepsze brania wczesnym rankiem</td>
+                </tr>
+                <tr>
+                    <td>4 czerwca (wtorek)</td>
+                    <td>5:00-9:00, 20:00-24:00</td>
+                    <td>Wieczorem możliwe silniejsze brania</td>
+                </tr>
+                <tr>
+                    <td>5 czerwca (środa)</td>
+                    <td>7:00-11:00, 18:00-22:00</td>
+                    <td>Stała aktywność przez cały dzień</td>
+                </tr>
+                <tr>
+                    <td>6 czerwca (czwartek)</td>
+                    <td>3:00-7:00, 16:00-20:00</td>
+                    <td>Wyraźne zwiększenie aktywności o świcie</td>
+                </tr>
+                <tr>
+                    <td>7 czerwca (piątek)</td>
+                    <td>6:00-10:00, 19:00-23:00</td>
+                    <td>Dobre warunki przez cały dzień</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="box">
+            <h2>Łowisko</h2>
+            <a href="https://www.google.com/maps/place/Rutbekerveldweg+275,+7548+PP+Enschede,+Holandia/" class="location-link" target="_blank">
+                Zobacz łowisko na mapie (Rutbekerveldweg 275, 7548 PP Enschede)
+            </a>
+        </div>
+        
+        <div class="container">
+            <div class="box">
+                <h2>Harmonogram przynęt - Maciek</h2>
+                <table id="bait-schedule-maciek">
+                    <tr>
+                        <th>Data</th>
+                        <th>Przynęta</th>
+                        <th>Uwagi</th>
+                    </tr>
+                </table>
+                <button onclick="addRow('bait-schedule-maciek')">Dodaj wpis</button>
+            </div>
+            
+            <div class="box">
+                <h2>Harmonogram przynęt - Patryk</h2>
+                <table id="bait-schedule-patryk">
+                    <tr>
+                        <th>Data</th>
+                        <th>Przynęta</th>
+                        <th>Uwagi</th>
+                    </tr>
+                </table>
+                <button onclick="addRow('bait-schedule-patryk')">Dodaj wpis</button>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="box">
+                <h2>Dziennik połowów - Maciek</h2>
+                <table id="fishing-log-maciek">
+                    <tr>
+                        <th>Data</th>
+                        <th>Godzina</th>
+                        <th>Gatunek</th>
+                        <th>Waga</th>
+                        <th>Przynęta</th>
+                    </tr>
+                </table>
+                <button onclick="addRow('fishing-log-maciek')">Dodaj wpis</button>
+            </div>
+            
+            <div class="box">
+                <h2>Dziennik połowów - Patryk</h2>
+                <table id="fishing-log-patryk">
+                    <tr>
+                        <th>Data</th>
+                        <th>Godzina</th>
+                        <th>Gatunek</th>
+                        <th>Waga</th>
+                        <th>Przynęta</th>
+                    </tr>
+                </table>
+                <button onclick="addRow('fishing-log-patryk')">Dodaj wpis</button>
+            </div>
+        </div>
+        
+        <div id="weather-alerts" class="box">
+            <h2>Alerty pogodowe</h2>
+            <div id="alerts-container">
+                <!-- Alerty będą dodawane dynamicznie -->
+            </div>
+        </div>
+        
+        <div class="fishing-tips">
+            <h2>Porady wędkarskie</h2>
+            <h3>Węzły dla karpia:</h3>
+            <ul>
+                <li><strong>Węzeł knotless knot</strong> - idealny do montażu włosowych na kulki proteinowe</li>
+                <li><strong>Węzeł grinner</strong> - pewne połączenie przyponu z żyłką główną</li>
+                <li><strong>Węzeł palomar</strong> - prosty i wytrzymały, dobry do łączenia haczyków</li>
+            </ul>
+            
+            <h3>Porady dotyczące Deeper Chirp 2 Plus:</h3>
+            <ul>
+                <li>Użyj trybu CHIRP dla lepszej rozdzielczości w wodach do 40m</li>
+                <li>Kalibruj echosondę przed każdym użyciem dla dokładniejszych odczytów</li>
+                <li>Mapuj łowisko podczas niskiej aktywności ryb, aby stworzyć dokładną mapę dna</li>
+                <li>Szukaj nagłych zmian głębokości i struktur na dnie - to ulubione miejsca karpia</li>
+            </ul>
+            
+            <h3>Przynęty na karpia w czerwcu:</h3>
+            <ul>
+                <li>Kulki proteinowe o średnicy 14-18mm w smakach owocowych</li>
+                <li>Kukurydza i pellet jako przynęta podstawowa</li>
+                <li>Tiger nuts (orzechy tygrysie) moczone przez 24h przed użyciem</li>
+                <li>W cieplejsze dni warto próbować lżejszych, pływających przynęt</li>
+            </ul>
+        </div>
     </div>
-  </div>
 
-  <div class="box">
-    <h4>Dziennik połowów</h4>
-    <div class="row">
-      <div class="col-md-6">
-        <h5>Maciek</h5>
-        <textarea rows="12" placeholder="Data – Godzina – Gatunek – Waga – Przynęta
-"></textarea>
-      </div>
-      <div class="col-md-6">
-        <h5>Patryk</h5>
-        <textarea rows="12" placeholder="Data – Godzina – Gatunek – Waga – Przynęta
-"></textarea>
-      </div>
-    </div>
-  </div>
-
-  <div class="box">
-    <h4>Alert pogodowy</h4>
-    <div id="alertBox"></div>
-  </div>
-
-  <div class="box">
-    <h4>Jak wiązać przypony karpiowe?</h4>
-    <ul>
-      <li><a href="https://www.youtube.com/watch?v=XZbz6HCl5dk" target="_blank" rel="noopener noreferrer">Przypon D-Rig</a></li>
-      <li><a href="https://www.youtube.com/watch?v=sKtOtQa-jYc" target="_blank" rel="noopener noreferrer">Przypon Blowback</a></li>
-      <li><a href="https://www.youtube.com/watch?v=3nQfqkW1MbM" target="_blank" rel="noopener noreferrer">Przypon Multi Rig</a></li>
-      <li><a href="https://www.youtube.com/watch?v=Y64xwKPHuvg" target="_blank" rel="noopener noreferrer">Przypon Ronnie Rig</a></li>
-      <li><a href="https://www.youtube.com/watch?v=C8c1dfrbJbE" target="_blank" rel="noopener noreferrer">Przypon Combi Rig</a></li>
-      <li><a href="https://www.youtube.com/watch?v=w-HLO0V94gk" target="_blank" rel="noopener noreferrer">Wiązanie haczyków bez węzła (knotless knot)</a></li>
-    </ul>
-  </div>
-
-  <div class="box">
-    <h4>Deeper CHIRP+ – informacje</h4>
-    <ul>
-      <li><a href="https://www.deepersonar.com/pl/pl_pl/deeper-chirp-plus" target="_blank" rel="noopener noreferrer">Oficjalna strona produktu</a></li>
-      <li><a href="https://www.youtube.com/watch?v=bZhnFRCJ_ug" target="_blank" rel="noopener noreferrer">Jak korzystać z Deeper CHIRP+</a></li>
-      <li><a href="https://www.youtube.com/watch?v=v2bYQTA_vcU" target="_blank" rel="noopener noreferrer">Porady i ustawienia echosondy</a></li>
-      <li><a href="https://www.youtube.com/watch?v=KL3AX8lXo3c" target="_blank" rel="noopener noreferrer">Tworzenie map batymetrycznych</a></li>
-    </ul>
-  </div>
-
-  <script src="script.js"></script>
+    <script>
+        // Aktualny czas i odliczanie
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = `Aktualna godzina: ${now.toLocaleTimeString()}`;
+            
+            const targetDate = new Date('2024-06-01T14:00:00');
+            const diff = targetDate - now;
+            
+            if (diff <= 0) {
+                document.getElementById('countdown').textContent = "Czas nadszedł! Miłego wędkowania!";
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('countdown').textContent = `Do 1 czerwca 14:00 pozostało: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+        
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // Funkcja do dodawania wierszy do tabel
+        function addRow(tableId) {
+            const table = document.getElementById(tableId);
+            const newRow = table.insertRow();
+            
+            if (tableId.includes('bait-schedule')) {
+                newRow.innerHTML = `
+                    <td><input type="date"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                `;
+            } else if (tableId.includes('fishing-log')) {
+                newRow.innerHTML = `
+                    <td><input type="date"></td>
+                    <td><input type="time"></td>
+                    <td><input type="text"></td>
+                    <td><input type="number" step="0.1"></td>
+                    <td><input type="text"></td>
+                `;
+            }
+        }
+        
+        // Symulacja danych pogodowych (w rzeczywistości warto użyć API pogodowego)
+        function loadWeatherData() {
+            // Aktualna pogoda
+            document.getElementById('current-weather').innerHTML = `
+                <p><strong>Stan pogody:</strong> Słonecznie</p>
+                <p><strong>Temperatura:</strong> 18°C</p>
+                <p><strong>Wschód słońca:</strong> 5:15</p>
+                <p><strong>Zachód słońca:</strong> 21:45</p>
+                <p><strong>Wiatr:</strong> 12 km/h z południowego zachodu</p>
+                <p><strong>Ciśnienie:</strong> 1012 hPa</p>
+                <p><strong>Wilgotność:</strong> 65%</p>
+                <p><strong>Możliwość opadów:</strong> 10%</p>
+            `;
+            
+            // Prognoza pogody
+            document.getElementById('weather-forecast').innerHTML = `
+                <table>
+                    <tr>
+                        <th>Data</th>
+                        <th>Temperatura</th>
+                        <th>Wschód/Zachód</th>
+                        <th>Wiatr</th>
+                        <th>Opady</th>
+                    </tr>
+                    <tr>
+                        <td>1 czerwca</td>
+                        <td>16-22°C</td>
+                        <td>5:15 / 21:45</td>
+                        <td>10-15 km/h SW</td>
+                        <td>20%</td>
+                    </tr>
+                    <tr>
+                        <td>2 czerwca</td>
+                        <td>18-24°C</td>
+                        <td>5:14 / 21:46</td>
+                        <td>8-12 km/h W</td>
+                        <td>10%</td>
+                    </tr>
+                    <tr>
+                        <td>3 czerwca</td>
+                        <td>20-25°C</td>
+                        <td>5:13 / 21:47</td>
+                        <td>5-10 km/h NW</td>
+                        <td>0%</td>
+                    </tr>
+                    <tr>
+                        <td>4 czerwca</td>
+                        <td>19-23°C</td>
+                        <td>5:12 / 21:48</td>
+                        <td>10-15 km/h NE</td>
+                        <td>30%</td>
+                    </tr>
+                    <tr>
+                        <td>5 czerwca</td>
+                        <td>17-21°C</td>
+                        <td>5:11 / 21:49</td>
+                        <td>15-20 km/h E</td>
+                        <td>50%</td>
+                    </tr>
+                    <tr>
+                        <td>6 czerwca</td>
+                        <td>15-19°C</td>
+                        <td>5:10 / 21:50</td>
+                        <td>20-25 km/h SE</td>
+                        <td>70%</td>
+                    </tr>
+                    <tr>
+                        <td>7 czerwca</td>
+                        <td>14-18°C</td>
+                        <td>5:09 / 21:51</td>
+                        <td>15-20 km/h S</td>
+                        <td>40%</td>
+                    </tr>
+                </table>
+            `;
+            
+            // Alerty pogodowe
+            const alertsContainer = document.getElementById('alerts-container');
+            alertsContainer.innerHTML = `
+                <div class="weather-alert">Uwaga! 5 czerwca możliwe przelotne opady deszczu (70% prawdopodobieństwa)</div>
+                <div class="weather-alert">6 czerwca silniejszy wiatr (do 25 km/h) - przygotuj cięższe obciążenia</div>
+            `;
+        }
+        
+        // W rzeczywistej implementacji warto użyć API pogodowego np.:
+        // async function fetchWeather() {
+        //     const response = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Enschede&appid=TWÓJ_API_KEY&units=metric&lang=pl');
+        //     const data = await response.json();
+        //     // Przetwarzanie danych...
+        // }
+        
+        // Załadowanie danych pogodowych po załadowaniu strony
+        window.onload = loadWeatherData;
+    </script>
 </body>
 </html>
