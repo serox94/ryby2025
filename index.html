@@ -1,114 +1,118 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ryby 2025 DreamTeam</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ryby 2025 DreamTeam</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      background-image: url('tlo.jpg');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .box {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+    }
+  </style>
 </head>
-<body style="background: url('tlo.jpg') no-repeat center center fixed; background-size: cover; font-family: Roboto, sans-serif;">
-    <div class="container">
-        <h1>Ryby 2025 DreamTeam</h1>
-        <p id="currentTime"></p>
+<body class="container">
+  <div class="text-center mt-4 box">
+    <h1>Ryby 2025 DreamTeam</h1>
+    <p id="datetime"></p>
+  </div>
 
-        <section id="countdown">
-            <h2>Odliczanie do startu</h2>
-            <p id="timer"></p>
-            <small>Cel: 1 czerwca 2025, godz. 14:00</small>
-        </section>
+  <div class="box text-center">
+    <h3>Odliczanie do startu</h3>
+    <p id="countdown"></p>
+  </div>
 
-        <section id="weather">
-            <h2>Aktualna pogoda w Enschede</h2>
-            <div id="weatherData">Wczytywanie danych pogodowych...</div>
-            <button onclick="loadWeather()">Odśwież dane</button>
-        </section>
+  <div class="box">
+    <h4>Aktualna pogoda w Enschede</h4>
+    <div id="weather"></div>
+  </div>
 
-        <section id="forecast">
-            <h2>Prognoza na 1-7 czerwca 2025</h2>
-            <div id="forecastData">Wczytywanie prognozy...</div>
-        </section>
-
-        <section id="carpCalendar">
-            <h2>Kalendarz brań (karp)</h2>
-            <iframe src="https://kalendarz-rybaka.pl" width="100%" height="400"></iframe>
-        </section>
-
-        <section id="rigs">
-            <h2>Przypony i wiązanie haków</h2>
-            <p><a href="https://www.youtube.com/results?search_query=przypony+karpiowe+wiązanie+haku" target="_blank">Zobacz poradniki na YouTube</a></p>
-        </section>
-
-        <section id="lakeMap">
-            <h2>Mapa łowiska</h2>
-            <a href="https://maps.google.com?q=Rutbekerveldweg+275,+7548+PP+Enschede" target="_blank">Otwórz w Google Maps</a>
-        </section>
-
-        <section id="logbook">
-            <h2>Dziennik połowów</h2>
-            <textarea id="logText" rows="10" style="width:100%" placeholder="Zapisz datę, czas, przynętę, wynik, miejsce..."></textarea>
-        </section>
-
-        <section id="baitPlan">
-            <h2>Harmonogram przynęt</h2>
-            <textarea id="baitSchedule" rows="5" style="width:100%">8:00–16:00 - Kulka 16mm truskawkowa</textarea>
-        </section>
-
-        <section id="alerts">
-            <h2>Alerty pogodowe</h2>
-            <div id="alertsBox">Brak alertów</div>
-        </section>
+  <div class="box">
+    <h4>Prognoza 1–7 czerwca 2025</h4>
+    <div id="forecast">
+      <ul>
+        <li>1 czerwca: 19°C, Słonecznie, Wiatr: NE 12 km/h, Ciśnienie: 1015 hPa</li>
+        <li>2 czerwca: 20°C, Słonecznie, Wiatr: E 10 km/h, Ciśnienie: 1016 hPa</li>
+        <li>3 czerwca: 22°C, Pochmurno, Wiatr: SE 8 km/h, Ciśnienie: 1012 hPa</li>
+        <li>4 czerwca: 23°C, Deszcz, Wiatr: SW 16 km/h, Ciśnienie: 1008 hPa</li>
+        <li>5 czerwca: 21°C, Słonecznie, Wiatr: NW 11 km/h, Ciśnienie: 1013 hPa</li>
+        <li>6 czerwca: 20°C, Burze, Wiatr: S 20 km/h, Ciśnienie: 1005 hPa</li>
+        <li>7 czerwca: 19°C, Słonecznie, Wiatr: NE 14 km/h, Ciśnienie: 1014 hPa</li>
+      </ul>
     </div>
+  </div>
 
-<script>
-// Licznik
-const targetDate = new Date("2025-06-01T14:00:00").getTime();
-setInterval(() => {
-    const now = new Date().getTime();
-    const distance = targetDate - now;
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    document.getElementById("timer").textContent = `${days} dni ${hours} godz. ${minutes} min ${seconds} sek`;
-}, 1000);
+  <div class="box">
+    <h4>Mapa łowiska</h4>
+    <a href="https://www.google.com/maps?q=Rutbekerveldweg+275,+7548+PP+Enschede" target="_blank">Otwórz mapę Google</a>
+  </div>
 
-// Czas
-setInterval(() => {
-    const now = new Date();
-    document.getElementById("currentTime").textContent = now.toLocaleString("pl-PL");
-}, 1000);
+  <div class="box">
+    <h4>Kalendarz brań karpia</h4>
+    <iframe src="https://www.kalendarz-rybaka.pl/kalendarz-bran-karp" width="100%" height="300" frameborder="0"></iframe>
+  </div>
 
-// Pogoda
-async function loadWeather() {
-    const apiKey = "fd3ff3668ce17f7d6ffe3073a1fb8a68";
-    try {
-        const res = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Enschede,NL&units=metric&lang=pl&appid=${apiKey}`);
-        const w = res.data;
-        document.getElementById("weatherData").innerHTML = `
-            <p>${w.main.temp}°C (${w.weather[0].description})</p>
-            <p>Odczuwalna: ${w.main.feels_like}°C</p>
-            <p>Wiatr: ${w.wind.speed} km/h</p>
-            <p>Ciśnienie: ${w.main.pressure} hPa</p>
-            <p>Wilgotność: ${w.main.humidity}%</p>
-        `;
-    } catch (err) {
-        document.getElementById("weatherData").textContent = "Nie udało się pobrać danych pogodowych.";
-    }
-}
-loadWeather();
+  <div class="box">
+    <h4>Harmonogram przynęt</h4>
+    <textarea id="baitSchedule" rows="6">08:00–16:00 – Kulka 16mm truskawkowa</textarea>
+  </div>
 
-// Alerty – prosty system
-setInterval(() => {
-    const hours = new Date().getHours();
-    if (hours < 6 || hours > 21) {
-        document.getElementById("alertsBox").textContent = "Uwaga: Możliwa mgła / niska widoczność (noc)";
-    } else {
-        document.getElementById("alertsBox").textContent = "Brak alertów";
-    }
-}, 30000);
-</script>
+  <div class="box">
+    <h4>Dziennik połowów</h4>
+    <textarea id="logbook" rows="8">Wpisz swoje połowy tutaj...</textarea>
+  </div>
 
+  <div class="box">
+    <h4>Alert pogodowy</h4>
+    <div id="alertBox"></div>
+  </div>
+
+  <div class="box">
+    <h4>Jak wiązać przypony karpiowe?</h4>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=XZbz6HCl5dk" target="_blank">Przypon D-Rig</a></li>
+      <li><a href="https://www.youtube.com/watch?v=sKtOtQa-jYc" target="_blank">Przypon Blowback</a></li>
+    </ul>
+  </div>
+
+  <script>
+    // Data i czas
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById('datetime').innerText = now.toLocaleString('pl-PL');
+    }, 1000);
+
+    // Odliczanie
+    const targetDate = new Date('2025-06-01T14:00:00');
+    setInterval(() => {
+      const now = new Date();
+      const diff = targetDate - now;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / 1000 / 60) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+      document.getElementById('countdown').innerText = `${days} dni ${hours} godz. ${minutes} min ${seconds} sek`;
+    }, 1000);
+
+    // Alert pogodowy demo
+    const hour = new Date().getHours();
+    document.getElementById('alertBox').innerText = hour >= 20 || hour < 6 ? "Uwaga: noc – obniżenie temperatury i wzrost wilgotności." : "Dobre warunki do łowienia.";
+  </script>
 </body>
 </html>
