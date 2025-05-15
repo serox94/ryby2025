@@ -1,66 +1,40 @@
-setInterval(() => {
-  const now = new Date();
-  document.getElementById('datetime').innerText = now.toLocaleString('pl-PL');
-}, 1000);
+<script>
+  const warunkiPL = {
+    0: 'Bezchmurnie', 1: 'Głównie bezchmurnie', 2: 'Częściowo pochmurno', 3: 'Zachmurzenie całkowite',
+    45: 'Mgła', 48: 'Osadzająca się mgła',
+    51: 'Lekka mżawka', 53: 'Umiarkowana mżawka', 55: 'Gęsta mżawka',
+    61: 'Lekki deszcz', 63: 'Umiarkowany deszcz', 65: 'Ulewne opady',
+    71: 'Śnieg lekki', 73: 'Śnieg umiarkowany', 75: 'Obfite opady śniegu',
+    80: 'Przelotne opady', 81: 'Umiarkowane przelotne', 82: 'Silne przelotne',
+    95: 'Burza', 96: 'Burza z gradem', 99: 'Silna burza z gradem'
+  };
+  const dniPL = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
 
-const targetDate = new Date('2025-06-01T14:00:00');
-setInterval(() => {
-  const now = new Date();
-  const diff = targetDate - now;
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((diff / 1000 / 60) % 60);
-  const seconds = Math.floor((diff / 1000) % 60);
-  document.getElementById('countdown').innerText = `${days} dni ${hours} godz. ${minutes} min ${seconds} sek`;
-}, 1000);
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=52.2184&longitude=6.8958&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_mean,weathercode&timezone=auto&start_date=2025-06-01&end_date=2025-06-07')
+    .then(res => res.json())
+    .then(data => {
+      const forecastList = document.getElementById("forecastList");
+      forecastList.innerHTML = "";
+      for (let i = 0; i < data.daily.time.length; i++) {
+        const dateStr = data.daily.time[i];
+        const date = new Date(dateStr);
+        const day = dniPL[date.getDay()];
+        const tmin = data.daily.temperature_2m_min[i];
+        const tmax = data.daily.temperature_2m_max[i];
+        const rain = data.daily.precipitation_probability_mean[i];
+        const code = data.daily.weathercode[i];
+        const opis = warunkiPL[code] || 'Pogoda';
+        let ikona = 'wi-day-sunny';
+        if (code >= 3 && code < 61) ikona = 'wi-cloudy';
+        if (code >= 61 && code < 80) ikona = 'wi-rain';
+        if (code >= 80 && code < 90) ikona = 'wi-showers';
+        if (code >= 95) ikona = 'wi-thunderstorm';
 
-const hour = new Date().getHours();
-document.getElementById('alertBox').innerText = hour >= 20 || hour < 6
-  ? "Uwaga: noc – obniżenie temperatury i wzrost wilgotności."
-  : "Dobre warunki do łowienia.";
-
-fetch('https://api.openweathermap.org/data/2.5/onecall?lat=52.2184&lon=6.8958&units=metric&lang=pl&exclude=hourly,minutely&appid=fd3ff3668ce17f7d6ffe3073a1fb8a68')
-  .then(async res => {
-    const contentType = res.headers.get("content-type");
-    const text = await res.text();
-    if (contentType && contentType.includes("application/json")) {
-      return JSON.parse(text);
-    } else {
-      console.error("Błędny typ danych:", contentType);
-      throw new Error("Niepoprawny format odpowiedzi z API pogodowego.");
-    }
-  })
-  .then(data => {
-    const current = data.current;
-    document.getElementById("weatherBox").innerHTML = `
-      <img class="icon" src="https://openweathermap.org/img/wn/${current.weather[0].icon}.png" alt="pogoda"> 
-      Temp: ${current.temp.toFixed(1)}°C, ${current.weather[0].description}<br>
-      Wiatr: ${current.wind_speed} m/s, Ciśnienie: ${current.pressure} hPa, Wilgotność: ${current.humidity}%
-    `;
-
-    const forecastList = document.getElementById("forecastList");
-    forecastList.innerHTML = "";
-    const days = ['Niedz.', 'Pon.', 'Wt.', 'Śr.', 'Czw.', 'Pt.', 'Sob.'];
-    for (let i = 0; i < 7; i++) {
-      const day = data.daily[i];
-      const date = new Date(day.dt * 1000);
-      const line = `${days[date.getDay()]} ${date.toLocaleDateString('pl-PL')}: ${day.temp.day.toFixed(1)}°C, ${day.weather[0].description}, Wiatr: ${day.wind_speed} m/s, Ciśnienie: ${day.pressure} hPa`;
-      const li = document.createElement("li");
-      const icon = document.createElement("img");
-      icon.src = `https://openweathermap.org/img/wn/${day.weather[0].icon}.png`;
-      icon.className = "icon";
-      li.appendChild(icon);
-      li.append(" " + line);
-      forecastList.appendChild(li);
-    }
-
-    const pressure = current.pressure;
-    const moonPhase = data.daily[0].moon_phase;
-    let activity = "Średnia aktywność ryb";
-    if ((moonPhase > 0.45 && moonPhase < 0.55) && pressure > 1012 && pressure < 1018) {
-      activity = "Wysoka aktywność – pełnia i dobre ciśnienie!";
-    } else if (pressure < 1005 || pressure > 1025) {
-      activity = "Słaba aktywność – niekorzystne ciśnienie";
-    }
-    document.getElementById("biteCalendar").innerText = activity;
-  });
+        forecastList.innerHTML += `<li><i class="wi ${ikona}"></i> ${day}, ${date.getDate()} czerwca: ${tmin}–${tmax}°C, Opady: ${rain}%, ${opis}</li>`;
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("forecastList").innerText = "Nie udało się załadować prognozy.";
+    });
+</script>
