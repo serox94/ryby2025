@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wędkarstwo w Enschede</title>
+    <title>DreamTeam 2025 - Wędkarstwo w Enschede</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -25,16 +25,28 @@
         }
         
         header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 20px;
             text-align: center;
-            border-radius: 8px;
             margin-bottom: 20px;
+        }
+        
+        .main-title {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        
+        .current-date {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin-bottom: 15px;
         }
         
         h1, h2, h3 {
             color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
         }
         
         .container {
@@ -52,13 +64,14 @@
         }
         
         .countdown {
-            font-size: 1.5em;
+            font-size: 1.8em;
             font-weight: bold;
             color: #e74c3c;
             text-align: center;
-            padding: 10px;
+            padding: 15px;
             background-color: rgba(255, 255, 255, 0.7);
             border-radius: 8px;
+            margin: 20px 0;
         }
         
         table {
@@ -168,13 +181,13 @@
 <body>
     <div class="content-wrapper">
         <header>
-            <h1>Wędkarstwo w Enschede</h1>
-            <p>Przygotowania do wyprawy 1 czerwca</p>
+            <div class="main-title">DreamTeam 2025</div>
+            <div class="current-date" id="current-date-time"></div>
         </header>
         
-        <div class="countdown">
-            <div id="current-time"></div>
-            <div id="countdown"></div>
+        <div class="countdown" id="countdown">
+            <div>Do 1 czerwca 14:00 pozostało:</div>
+            <div id="countdown-timer"></div>
         </div>
         
         <div class="container">
@@ -373,16 +386,29 @@
         const API_KEY = 'fd3ff3668ce17f7d6ffe3073a1fb8a68';
         const CITY = 'Enschede';
         
-        // Aktualny czas i odliczanie
-        function updateTime() {
+        // Funkcja do aktualizacji daty i czasu
+        function updateDateTime() {
             const now = new Date();
-            document.getElementById('current-time').textContent = `Aktualna godzina: ${now.toLocaleTimeString()}`;
-            
-            const targetDate = new Date('2024-06-01T14:00:00');
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('current-date-time').textContent = now.toLocaleDateString('pl-PL', options);
+        }
+        
+        // Funkcja odliczająca czas do 1 czerwca 14:00
+        function updateCountdown() {
+            const now = new Date();
+            const targetDate = new Date('2025-06-01T14:00:00');
             const diff = targetDate - now;
             
             if (diff <= 0) {
-                document.getElementById('countdown').textContent = "Czas nadszedł! Miłego wędkowania!";
+                document.getElementById('countdown-timer').innerHTML = "Czas nadszedł! Miłego wędkowania!";
                 return;
             }
             
@@ -391,11 +417,20 @@
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
             
-            document.getElementById('countdown').textContent = `Do 1 czerwca 14:00 pozostało: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+            document.getElementById('countdown-timer').innerHTML = `
+                ${days} dni ${hours} godzin ${minutes} minut ${seconds} sekund
+            `;
         }
         
-        setInterval(updateTime, 1000);
-        updateTime();
+        // Aktualizuj zegar i odliczanie co sekundę
+        setInterval(() => {
+            updateDateTime();
+            updateCountdown();
+        }, 1000);
+        
+        // Inicjalizacja
+        updateDateTime();
+        updateCountdown();
         
         // Funkcja do dodawania wierszy do tabel
         function addRow(tableId) {
@@ -593,7 +628,6 @@
         
         // Załadowanie danych pogodowych po załadowaniu strony
         window.onload = () => {
-            updateTime();
             fetchCurrentWeather();
             fetchWeatherForecast();
         };
