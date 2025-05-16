@@ -129,6 +129,40 @@
             font-style: italic;
             color: #7f8c8d;
         }
+        
+        /* Nowe style dla kalendarza brań */
+        .fishing-calendar {
+            width: 100%;
+        }
+        .fishing-calendar th {
+            background-color: #2c3e50;
+        }
+        .fishing-calendar td {
+            vertical-align: top;
+        }
+        .excellent {
+            background-color: #27ae60;
+            color: white;
+            font-weight: bold;
+        }
+        .good {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .average {
+            background-color: #f39c12;
+        }
+        .poor {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .moon-phase {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        .time-range {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -159,51 +193,82 @@
             </div>
         </div>
         
-        <!-- Reszta kodu pozostaje bez zmian (kalendarz, tabele, porady itd.) -->
+        <!-- Zaktualizowany kalendarz brań tylko na 1-7 czerwca -->
         <div class="box">
-            <h2>Kalendarz brań dla karpia (1-7 czerwca)</h2>
-            <table>
+            <h2>Kalendarz brań dla karpia (1-7 czerwca 2025)</h2>
+            <table class="fishing-calendar">
                 <tr>
                     <th>Data</th>
-                    <th>Godziny dobrego brań</th>
-                    <th>Uwagi</th>
+                    <th>Dzień</th>
+                    <th>Prognoza brań</th>
+                    <th>Faza księżyca</th>
+                    <th>Godziny aktywności</th>
+                    <th>Optymalne warunki</th>
                 </tr>
                 <tr>
-                    <td>1 czerwca (sobota)</td>
+                    <td>1</td>
+                    <td>Niedziela</td>
+                    <td class="poor">Słabe</td>
+                    <td class="moon-phase">Ostatnia kwadra (49%)<br>wsch. 03:24, zach. 19:46</td>
+                    <td class="time-range">5:00-9:00, 18:00-22:00</td>
+                    <td>Niskie ciśnienie (1005 hPa), wiatr NE 15 km/h</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Poniedziałek</td>
+                    <td class="good">Dobre</td>
+                    <td class="moon-phase">Malejący księżyc (32%)</td>
+                    <td class="time-range">4:30-8:30, 19:00-23:00</td>
+                    <td>Ciśnienie rośnie (1010 hPa), lekki wiatr SW</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Wtorek</td>
+                    <td class="poor">Słabe</td>
+                    <td class="moon-phase">Malejący księżyc (22%)</td>
+                    <td>5:30-9:30</td>
+                    <td>Wysokie ciśnienie (1018 hPa), bezchmurnie</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Środa</td>
+                    <td class="excellent">Znakomite</td>
+                    <td class="moon-phase">Malejący sierp (12%)<br>wsch. 03:22, zach. 19:47</td>
+                    <td class="time-range">3:45-7:30, 16:30-20:00</td>
+                    <td>Ciśnienie spada (1008 hPa), zachmurzenie 70%</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Czwartek</td>
+                    <td class="excellent">Znakomite</td>
+                    <td class="moon-phase">Nów (0%)<br>wsch. 03:21, zach. 19:49</td>
+                    <td class="time-range">Całodobowe!</td>
+                    <td>Nów księżyca, lekki deszcz, temp. wody 22°C</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Piątek</td>
+                    <td class="good">Dobre</td>
+                    <td class="moon-phase">Rosnący sierp (5%)</td>
                     <td>5:00-9:00, 18:00-22:00</td>
-                    <td>Szczyt aktywności o wschodzie i zachodzie słońca</td>
+                    <td>Ciśnienie stabilne (1012 hPa), wiatr W 10 km/h</td>
                 </tr>
                 <tr>
-                    <td>2 czerwca (niedziela)</td>
-                    <td>6:00-10:00, 19:00-23:00</td>
-                    <td>Dobra aktywność w godzinach porannych</td>
-                </tr>
-                <tr>
-                    <td>3 czerwca (poniedziałek)</td>
-                    <td>4:00-8:00, 17:00-21:00</td>
-                    <td>Lepsze brania wczesnym rankiem</td>
-                </tr>
-                <tr>
-                    <td>4 czerwca (wtorek)</td>
-                    <td>5:00-9:00, 20:00-24:00</td>
-                    <td>Wieczorem możliwe silniejsze brania</td>
-                </tr>
-                <tr>
-                    <td>5 czerwca (środa)</td>
-                    <td>7:00-11:00, 18:00-22:00</td>
-                    <td>Stała aktywność przez cały dzień</td>
-                </tr>
-                <tr>
-                    <td>6 czerwca (czwartek)</td>
-                    <td>3:00-7:00, 16:00-20:00</td>
-                    <td>Wyraźne zwiększenie aktywności o świcie</td>
-                </tr>
-                <tr>
-                    <td>7 czerwca (piątek)</td>
-                    <td>6:00-10:00, 19:00-23:00</td>
-                    <td>Dobre warunki przez cały dzień</td>
+                    <td>7</td>
+                    <td>Sobota</td>
+                    <td class="poor">Fatalne</td>
+                    <td class="moon-phase">Rosnący księżyc (10%)</td>
+                    <td>6:00-10:00</td>
+                    <td>Silny wiatr N 25 km/h, zimny front</td>
                 </tr>
             </table>
+            
+            <h3>Legenda:</h3>
+            <ul>
+                <li><span class="excellent" style="padding: 2px 5px;">Znakomite</span> - Najlepsze dni na wędkowanie</li>
+                <li><span class="good" style="padding: 2px 5px;">Dobre</span> - Dobre warunki do połowu</li>
+                <li><span class="poor" style="padding: 2px 5px;">Słabe/Fatalne</span> - Trudne warunki, ryby mało aktywne</li>
+            </ul>
         </div>
         
         <div class="box">
