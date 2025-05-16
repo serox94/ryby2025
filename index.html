@@ -113,10 +113,21 @@
             background-color: #2980b9;
         }
         
+        .weather-icon {
+            width: 50px;
+            height: 50px;
+            vertical-align: middle;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 grid-template-columns: 1fr;
             }
+        }
+        
+        .loading {
+            font-style: italic;
+            color: #7f8c8d;
         }
     </style>
 </head>
@@ -135,19 +146,20 @@
         <div class="container">
             <div class="box">
                 <h2>Aktualna pogoda w Enschede</h2>
-                <div id="current-weather">
+                <div id="current-weather" class="loading">
                     <p>Ładowanie danych pogodowych...</p>
                 </div>
             </div>
             
             <div class="box">
-                <h2>Prognoza pogody 1-7 czerwca</h2>
-                <div id="weather-forecast">
+                <h2>Prognoza pogody na 5 dni</h2>
+                <div id="weather-forecast" class="loading">
                     <p>Ładowanie prognozy pogody...</p>
                 </div>
             </div>
         </div>
         
+        <!-- Reszta kodu pozostaje bez zmian (kalendarz, tabele, porady itd.) -->
         <div class="box">
             <h2>Kalendarz brań dla karpia (1-7 czerwca)</h2>
             <table>
@@ -292,6 +304,10 @@
     </div>
 
     <script>
+        // API Key
+        const API_KEY = 'fd3ff3668ce17f7d6ffe3073a1fb8a68';
+        const CITY = 'Enschede';
+        
         // Aktualny czas i odliczanie
         function updateTime() {
             const now = new Date();
@@ -338,99 +354,184 @@
             }
         }
         
-        // Symulacja danych pogodowych (w rzeczywistości warto użyć API pogodowego)
-        function loadWeatherData() {
-            // Aktualna pogoda
-            document.getElementById('current-weather').innerHTML = `
-                <p><strong>Stan pogody:</strong> Słonecznie</p>
-                <p><strong>Temperatura:</strong> 18°C</p>
-                <p><strong>Wschód słońca:</strong> 5:15</p>
-                <p><strong>Zachód słońca:</strong> 21:45</p>
-                <p><strong>Wiatr:</strong> 12 km/h z południowego zachodu</p>
-                <p><strong>Ciśnienie:</strong> 1012 hPa</p>
-                <p><strong>Wilgotność:</strong> 65%</p>
-                <p><strong>Możliwość opadów:</strong> 10%</p>
-            `;
-            
-            // Prognoza pogody
-            document.getElementById('weather-forecast').innerHTML = `
-                <table>
-                    <tr>
-                        <th>Data</th>
-                        <th>Temperatura</th>
-                        <th>Wschód/Zachód</th>
-                        <th>Wiatr</th>
-                        <th>Opady</th>
-                    </tr>
-                    <tr>
-                        <td>1 czerwca</td>
-                        <td>16-22°C</td>
-                        <td>5:15 / 21:45</td>
-                        <td>10-15 km/h SW</td>
-                        <td>20%</td>
-                    </tr>
-                    <tr>
-                        <td>2 czerwca</td>
-                        <td>18-24°C</td>
-                        <td>5:14 / 21:46</td>
-                        <td>8-12 km/h W</td>
-                        <td>10%</td>
-                    </tr>
-                    <tr>
-                        <td>3 czerwca</td>
-                        <td>20-25°C</td>
-                        <td>5:13 / 21:47</td>
-                        <td>5-10 km/h NW</td>
-                        <td>0%</td>
-                    </tr>
-                    <tr>
-                        <td>4 czerwca</td>
-                        <td>19-23°C</td>
-                        <td>5:12 / 21:48</td>
-                        <td>10-15 km/h NE</td>
-                        <td>30%</td>
-                    </tr>
-                    <tr>
-                        <td>5 czerwca</td>
-                        <td>17-21°C</td>
-                        <td>5:11 / 21:49</td>
-                        <td>15-20 km/h E</td>
-                        <td>50%</td>
-                    </tr>
-                    <tr>
-                        <td>6 czerwca</td>
-                        <td>15-19°C</td>
-                        <td>5:10 / 21:50</td>
-                        <td>20-25 km/h SE</td>
-                        <td>70%</td>
-                    </tr>
-                    <tr>
-                        <td>7 czerwca</td>
-                        <td>14-18°C</td>
-                        <td>5:09 / 21:51</td>
-                        <td>15-20 km/h S</td>
-                        <td>40%</td>
-                    </tr>
-                </table>
-            `;
-            
-            // Alerty pogodowe
-            const alertsContainer = document.getElementById('alerts-container');
-            alertsContainer.innerHTML = `
-                <div class="weather-alert">Uwaga! 5 czerwca możliwe przelotne opady deszczu (70% prawdopodobieństwa)</div>
-                <div class="weather-alert">6 czerwca silniejszy wiatr (do 25 km/h) - przygotuj cięższe obciążenia</div>
-            `;
+        // Funkcja do tłumaczenia kierunku wiatru
+        function getWindDirection(degrees) {
+            const directions = ['Północny', 'Północno-Wschodni', 'Wschodni', 'Południowo-Wschodni', 
+                              'Południowy', 'Południowo-Zachodni', 'Zachodni', 'Północno-Zachodni'];
+            const index = Math.round((degrees % 360) / 45) % 8;
+            return directions[index];
         }
         
-        // W rzeczywistej implementacji warto użyć API pogodowego np.:
-        // async function fetchWeather() {
-        //     const response = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Enschede&appid=TWÓJ_API_KEY&units=metric&lang=pl');
-        //     const data = await response.json();
-        //     // Przetwarzanie danych...
-        // }
+        // Funkcja do pobierania aktualnej pogody
+        async function fetchCurrentWeather() {
+            try {
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${API_KEY}&units=metric&lang=pl`
+                );
+                const data = await response.json();
+                
+                if (data.cod !== 200) {
+                    throw new Error(data.message || 'Nie udało się pobrać danych pogodowych');
+                }
+                
+                const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                document.getElementById('current-weather').innerHTML = `
+                    <p><strong>Stan pogody:</strong> ${data.weather[0].description}</p>
+                    <p><strong>Temperatura:</strong> ${Math.round(data.main.temp)}°C (odczuwalna ${Math.round(data.main.feels_like)}°C)</p>
+                    <p><strong>Wschód słońca:</strong> ${sunrise}</p>
+                    <p><strong>Zachód słońca:</strong> ${sunset}</p>
+                    <p><strong>Wiatr:</strong> ${Math.round(data.wind.speed * 3.6)} km/h ${getWindDirection(data.wind.deg)}</p>
+                    <p><strong>Ciśnienie:</strong> ${data.main.pressure} hPa</p>
+                    <p><strong>Wilgotność:</strong> ${data.main.humidity}%</p>
+                    <p><strong>Zachmurzenie:</strong> ${data.clouds.all}%</p>
+                `;
+                
+                // Sprawdź czy są alerty pogodowe
+                checkWeatherAlerts(data);
+                
+            } catch (error) {
+                console.error('Błąd pobierania pogody:', error);
+                document.getElementById('current-weather').innerHTML = `
+                    <p>Nie udało się załadować aktualnej pogody. Spróbuj później.</p>
+                    <p>Błąd: ${error.message}</p>
+                `;
+            }
+        }
+        
+        // Funkcja do pobierania prognozy pogody
+        async function fetchWeatherForecast() {
+            try {
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/forecast?q=${CITY}&appid=${API_KEY}&units=metric&lang=pl&cnt=40`
+                );
+                const data = await response.json();
+                
+                if (data.cod !== '200') {
+                    throw new Error(data.message || 'Nie udało się pobrać prognozy pogody');
+                }
+                
+                // Grupowanie prognozy po dniach
+                const dailyForecast = {};
+                data.list.forEach(item => {
+                    const date = new Date(item.dt * 1000).toLocaleDateString();
+                    if (!dailyForecast[date]) {
+                        dailyForecast[date] = [];
+                    }
+                    dailyForecast[date].push(item);
+                });
+                
+                // Generowanie tabeli prognozy
+                let forecastHTML = '<table><tr><th>Data</th><th>Pogoda</th><th>Temp. (min/max)</th><th>Wiatr</th><th>Opady</th></tr>';
+                
+                // Ogranicz do 5 dni
+                const dates = Object.keys(dailyForecast).slice(0, 5);
+                
+                dates.forEach(date => {
+                    const dayData = dailyForecast[date];
+                    const temps = dayData.map(item => item.main.temp);
+                    const minTemp = Math.round(Math.min(...temps));
+                    const maxTemp = Math.round(Math.max(...temps));
+                    
+                    // Znajdź prognozę na południe (najlepszą reprezentację dnia)
+                    const middayForecast = dayData.find(item => {
+                        const hours = new Date(item.dt * 1000).getHours();
+                        return hours >= 11 && hours <= 14;
+                    }) || dayData[Math.floor(dayData.length / 2)];
+                    
+                    forecastHTML += `
+                        <tr>
+                            <td>${date}</td>
+                            <td>
+                                <img src="https://openweathermap.org/img/wn/${middayForecast.weather[0].icon}.png" 
+                                     alt="${middayForecast.weather[0].description}" class="weather-icon">
+                                ${middayForecast.weather[0].description}
+                            </td>
+                            <td>${minTemp}°C / ${maxTemp}°C</td>
+                            <td>${Math.round(middayForecast.wind.speed * 3.6)} km/h ${getWindDirection(middayForecast.wind.deg)}</td>
+                            <td>${middayForecast.pop ? Math.round(middayForecast.pop * 100) : 0}%</td>
+                        </tr>
+                    `;
+                });
+                
+                forecastHTML += '</table>';
+                document.getElementById('weather-forecast').innerHTML = forecastHTML;
+                
+            } catch (error) {
+                console.error('Błąd pobierania prognozy:', error);
+                document.getElementById('weather-forecast').innerHTML = `
+                    <p>Nie udało się załadować prognozy pogody. Spróbuj później.</p>
+                    <p>Błąd: ${error.message}</p>
+                `;
+            }
+        }
+        
+        // Funkcja do sprawdzania alertów pogodowych
+        function checkWeatherAlerts(weatherData) {
+            const alertsContainer = document.getElementById('alerts-container');
+            alertsContainer.innerHTML = '';
+            
+            // Sprawdź warunki, które mogą być problematyczne dla wędkowania
+            const alerts = [];
+            
+            if (weatherData.wind.speed * 3.6 > 20) { // Wiatr > 20 km/h
+                alerts.push({
+                    level: 'warning',
+                    message: `Silny wiatr (${Math.round(weatherData.wind.speed * 3.6)} km/h) - utrudnione zarzucanie i kontrolowanie zestawu`
+                });
+            }
+            
+            if (weatherData.rain && weatherData.rain['1h'] > 5) {
+                alerts.push({
+                    level: 'info',
+                    message: 'Intensywne opady deszczu - przygotuj się na mokre warunki'
+                });
+            }
+            
+            if (weatherData.main.temp < 10) {
+                alerts.push({
+                    level: 'info',
+                    message: 'Niska temperatura - ryby mogą być mniej aktywne'
+                });
+            }
+            
+            if (alerts.length === 0) {
+                alerts.push({
+                    level: 'success',
+                    message: 'Brak alertów pogodowych - dobre warunki do wędkowania'
+                });
+            }
+            
+            alerts.forEach(alert => {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `weather-alert ${alert.level}`;
+                alertDiv.textContent = alert.message;
+                alertsContainer.appendChild(alertDiv);
+            });
+        }
+        
+        // Dodaj styl dla różnych poziomów alertów
+        const style = document.createElement('style');
+        style.textContent = `
+            .weather-alert.success {
+                background-color: #27ae60;
+            }
+            .weather-alert.warning {
+                background-color: #f39c12;
+            }
+            .weather-alert.info {
+                background-color: #3498db;
+            }
+        `;
+        document.head.appendChild(style);
         
         // Załadowanie danych pogodowych po załadowaniu strony
-        window.onload = loadWeatherData;
+        window.onload = () => {
+            updateTime();
+            fetchCurrentWeather();
+            fetchWeatherForecast();
+        };
     </script>
 </body>
 </html>
